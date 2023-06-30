@@ -32,6 +32,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordResetTokenServiceImpl passwordResetTokenService;
     private final PasswordEncoder passwordEncoder;
     private final MapperUtils mapperUtils;
     private final JwtTokenProvider jwtTokenProvider;
@@ -39,12 +40,14 @@ public class AuthServiceImpl implements AuthService {
     public AuthServiceImpl(AuthenticationManager authenticationManager,
                            UserRepository userRepository,
                            RoleRepository roleRepository,
+                           PasswordResetTokenServiceImpl passwordResetTokenService,
                            PasswordEncoder passwordEncoder,
                            MapperUtils mapperUtils,
                            JwtTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordResetTokenService = passwordResetTokenService;
         this.passwordEncoder = passwordEncoder;
         this.mapperUtils = mapperUtils;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -134,6 +137,12 @@ public class AuthServiceImpl implements AuthService {
         } else {
             throw new BadRequestException("A senha atual não condiz com a senha cadastrada anteriormente.");
         }
+    }
+
+    @Override
+    public void createPasswordResetTokenForUser(User user,
+                                                String passwordToken) {
+        passwordResetTokenService.createPasswordResetTokenForUser(user, passwordToken);
     }
 
     private UserDto copyPropertiesFromUserToUserDto(User user) {
